@@ -1,0 +1,173 @@
+/* ===============================
+   LAYOUT UTAMA
+================================ */
+.wrapper {
+    display: flex;
+    min-height: 100vh;
+    background: #f4f6f9;
+}
+
+/* ===============================
+   SIDEBAR (jaga konsisten)
+================================ */
+.sidebar {
+    width: 240px;
+    background: #0f172a;
+    color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+}
+
+.sidebar .sidebar-header {
+    padding: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    background: #020617;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu .menu-item a {
+    display: block;
+    padding: 14px 20px;
+    color: #cbd5f5;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.sidebar-menu .menu-item a:hover,
+.sidebar-menu .menu-item.active a {
+    background: #1e293b;
+    color: #fff;
+}
+
+/* ===============================
+   KONTEN
+================================ */
+.content {
+    margin-left: 240px;
+    padding: 25px;
+    width: 100%;
+}
+
+/* ===============================
+   JUDUL HALAMAN
+================================ */
+.page-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #0f172a;
+}
+
+/* ===============================
+   CARD
+================================ */
+.card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+/* ===============================
+   TABEL LAPORAN
+================================ */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.table thead {
+    background: #1e293b;
+    color: #fff;
+}
+
+.table th,
+.table td {
+    padding: 12px 14px;
+    font-size: 14px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.table tbody tr:hover {
+    background: #f1f5f9;
+}
+
+/* ===============================
+   STATUS BADGE
+================================ */
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge.diajukan {
+    background: #facc15;
+    color: #78350f;
+}
+
+.badge.proses {
+    background: #38bdf8;
+    color: #075985;
+}
+
+.badge.selesai {
+    background: #22c55e;
+    color: #14532d;
+}
+
+/* ===============================
+   BUTTON
+================================ */
+.btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-detail {
+    background: #2563eb;
+    color: #fff;
+}
+
+.btn-detail:hover {
+    background: #1d4ed8;
+}
+
+/* ===============================
+   KONTEN FULL (TANPA SIDEBAR)
+================================ */
+.content-full {
+    width: 100%;
+    padding: 30px;
+    background: #e6ffe6;
+}
+
+/* TABEL FULL KE PINGGIR */
+.content-full {
+    padding: 0;
+}
+
+.card.p-0 {
+    padding: 0 !important;
+}
+
+.table.m-0 {
+    margin: 0 !important;
+}
+
+

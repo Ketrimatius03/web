@@ -1,0 +1,96 @@
+/* =====================
+   GLOBAL
+===================== */
+body {
+    background: #f5f7fb;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+}
+
+/* =====================
+   SIDEBAR
+===================== */
+.sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #0f172a, #020617);
+    padding: 20px;
+}
+
+/* ITEM */
+.sidebar .nav-item {
+    color: #cbd5e1;
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
+
+/* LINK DI SIDEBAR */
+.sidebar .nav-item a {
+    color: inherit;              /* ikut warna nav-item */
+    text-decoration: none;       /* HILANGKAN GARIS BAWAH */
+    display: block;              /* satu baris penuh bisa diklik */
+    padding: 12px;
+    border-radius: 8px;
+}
+
+/* ICON */
+.sidebar .nav-item i {
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+/* HOVER */
+.sidebar .nav-item a:hover {
+    background: #1e293b;
+    color: #facc15;
+}
+
+/* ACTIVE */
+.sidebar .nav-item.active a {
+    background: #1e293b;
+    color: #facc15;
+}
+
+/* LOGOUT KHUSUS */
+.sidebar .nav-item.logout a {
+    color: #facc15;
+}
+
+/* =====================
+   CONTENT
+===================== */
+.content {
+    padding: 25px;
+}
+
+/* =====================
+   CARD STATISTIK
+===================== */
+.card-stat {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-stat i {
+    font-size: 35px;
+}
+
+.card-stat.blue i {
+    color: #2563eb;
+}
+
+.card-stat.yellow i {
+    color: #facc15;
+}
+
+.card-stat.green i {
+    color: #16a34a;
+}
+
+.card-stat.gray i {
+    color: #64748b;
+}

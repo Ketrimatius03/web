@@ -1,0 +1,84 @@
+body {
+    background-color: #f5f6f8;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background-color: #0f172a;
+    color: #fff;
+    padding: 16px 0;
+}
+
+.sidebar h4 {
+    color: #fff;
+}
+
+.sidebar .nav-link {
+    color: #cbd5e1;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    padding: 10px 14px;
+}
+
+.sidebar .nav-link i {
+    margin-right: 8px;
+}
+
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover {
+    background-color: #1e293b;
+    color: #fff;
+}
+
+.logout {
+    color: #facc15;
+    text-decoration: none;
+}
+
+.role {
+    color: #facc15;
+    font-size: 14px;
+}
+
+/* CONTENT */
+.content {
+    width: 100%;
+    padding: 24px;
+}
+
+/* CARD STATISTIK */
+.card-stat {
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: none;
+}
+
+.card-stat p {
+    margin-bottom: 4px;
+    color: #6b7280;
+}
+
+.card-stat h3 {
+    margin: 0;
+    font-weight: bold;
+}
+
+/*tambah*/
+.card-header {
+    font-weight: bold;
+}
+
+.form-label {
+    font-weight: 500;
+}
+
+.btn-primary {
+    border-radius: 8px;
+}
+
+.card {
+    border-radius: 12px;
+}
