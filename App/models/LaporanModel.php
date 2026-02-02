@@ -9,6 +9,9 @@ class LaporanModel
         $this->db = new Database();
     }
 
+    /* ===============================
+       INSERT LAPORAN
+    =============================== */
     public function insertLaporan($data)
     {
         $query = "INSERT INTO master_laporan (
@@ -35,91 +38,90 @@ class LaporanModel
         return $this->db->execute();
     }
 
-
-    public function getByUser($userId)
+    /* ===============================
+       DATA LAPORAN
+    =============================== */
+    public function getAll()
     {
-        $query = "SELECT * FROM master_laporan
-                  WHERE id_user = ?
-                  ORDER BY created_at DESC";
-
-        $this->db->query($query);
-        $this->db->bind("i", $userId);
-
+        $this->db->query("SELECT * FROM master_laporan ORDER BY created_at DESC");
         return $this->db->resultSet();
     }
 
-    public function getById($id)
-    {
-    $query = "SELECT *
-              FROM master_laporan
-              WHERE id_laporan = ?";
-
-    $this->db->query($query);
-    $this->db->bind("i", $id);
-
-    return $this->db->single();
-  }
-
   public function getLatestByUser($userId, $limit = 5)
 {
-    $query = "SELECT *
-              FROM master_laporan
-              WHERE id_user = ?
-              ORDER BY created_at DESC
-              LIMIT ?";
+    $query = "
+        SELECT *
+        FROM master_laporan
+        WHERE id_user = ?
+        ORDER BY created_at DESC
+        LIMIT ?
+    ";
 
     $this->db->query($query);
     $this->db->bind("ii", $userId, $limit);
 
     return $this->db->resultSet();
 }
-
-public function getByStatus($status)
+public function getByUser($userId)
 {
-    $query = "SELECT *
-              FROM master_laporan
-              WHERE status_laporan = ?
-              ORDER BY created_at DESC";
-
-    $this->db->query($query);
-    $this->db->bind("s", $status);
+    $this->db->query("
+        SELECT *
+        FROM master_laporan
+        WHERE id_user = ?
+        ORDER BY created_at DESC
+    ");
+    $this->db->bind("i", $userId);
 
     return $this->db->resultSet();
 }
 
 
-public function getRiwayatAdmin()
-{
-    $query = "SELECT *
-              FROM master_laporan
-              WHERE status_laporan IN ('Proses', 'Selesai')
-              ORDER BY created_at DESC";
-    $this->db->query($query);
-    return $this->db->resultSet();
-}
 
-public function updateStatus($id, $status)
-{
-    $query = "UPDATE master_laporan
-              SET status_laporan = ?
-              WHERE id_laporan = ?";
+    public function getById($id)
+    {
+        $this->db->query("
+            SELECT * FROM master_laporan
+            WHERE id_laporan = ?
+        ");
+        $this->db->bind("i", $id);
+        return $this->db->single();
+    }
 
-    $this->db->query($query);
-    $this->db->bind("si", $status, $id);
+    public function getByStatus($status)
+    {
+        $this->db->query("
+            SELECT * FROM master_laporan
+            WHERE status_laporan = ?
+            ORDER BY created_at DESC
+        ");
+        $this->db->bind("s", $status);
+        return $this->db->resultSet();
+    }
 
-    return $this->db->execute();
-}
-public function getRiwayat()
-{
-    $query = "SELECT *
-              FROM master_laporan
-              WHERE status_laporan IN ('Selesai', 'Arsip')
-              ORDER BY created_at DESC";
+    /* ===============================
+       UPDATE STATUS (INI YANG ERROR TADI)
+    =============================== */
+    public function updateStatus($id_laporan, $status)
+    {
+        $this->db->query("
+            UPDATE master_laporan
+            SET status_laporan = ?
+            WHERE id_laporan = ?
+        ");
+        $this->db->bind("si", $status, $id_laporan);
+        return $this->db->execute();
+    }
 
-    $this->db->query($query);
-    return $this->db->resultSet();
-}
-
-
-
+    /* ===============================
+       RIWAYAT & ARSIP ADMIN
+    =============================== */
+    public function getRiwayat()
+    {
+        $this->db->query("
+            SELECT * FROM master_laporan
+            WHERE status_laporan IN ('Proses', 'Selesai', 'Arsip')
+            ORDER BY created_at DESC
+        ");
+        return $this->db->resultSet();
+    }
 }

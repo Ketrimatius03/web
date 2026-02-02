@@ -25,27 +25,39 @@ class DashboardController extends Controller
      * DASHBOARD ADMIN
      * ==========================
      */
-   public function admin()
+  public function admin()
 {
     $this->auth('admin');
 
     $master = $this->model('Master');
 
-    // STAT KARTU
-    $total  = $master->countAll();
+    // AMBIL DATA STATUS
     $status = $master->countByStatus();
 
-    $stat = [
-        'Diajukan' => 0,
-        'Diproses' => 0,
-        'Selesai'  => 0
-    ];
+    // DEFAULT NILAI (WAJIB)
+    $laporanMasuk = 0;
+    $dalamProses  = 0;
+    $selesai      = 0;
+    $diarsipkan   = 0;
 
     foreach ($status as $s) {
-        $stat[$s['status_laporan']] = $s['total'];
+        switch ($s['status_laporan']) {
+            case 'Diajukan':
+                $laporanMasuk = $s['total'];
+                break;
+            case 'Proses':
+                $dalamProses = $s['total'];
+                break;
+            case 'Selesai':
+                $selesai = $s['total'];
+                break;
+            case 'Arsip':
+                $diarsipkan = $s['total'];
+                break;
+        }
     }
 
-    // DATA CHART 7 HARI TERAKHIR
+    // DATA CHART
     $chartData = $master->laporan7Hari();
     $hari = [];
     $dataLaporan = [];
@@ -55,15 +67,14 @@ class DashboardController extends Controller
         $dataLaporan[] = $row['total'];
     }
 
+    // KIRIM KE VIEW (SESUAI admin.php)
     $this->view('dashboard/admin', [
-        'total'        => $total['total'],
-        'stat'         => $stat,
+        'laporanMasuk' => $laporanMasuk,
+        'dalamProses'  => $dalamProses,
+        'selesai'      => $selesai,
+        'diarsipkan'   => $diarsipkan,
         'hari'         => $hari,
-        'dataLaporan'  => $dataLaporan,
-        'laporanMasuk' => $stat['Diajukan'],
-        'dalamProses'  => $stat['Diproses'],
-        'selesai'      => $stat['Selesai'],
-        'diarsipkan'   => 0
+        'dataLaporan'  => $dataLaporan
     ]);
 }
 
@@ -74,37 +85,40 @@ class DashboardController extends Controller
      * ==========================
      */
     public function petugas()
-    {
-        $this->auth('user');
+{
+    $this->auth('user');
 
-        $userId = $_SESSION['user']['id'];
+    $userId = $_SESSION['user']['id'];
 
-        // LAPORAN TERAKHIR USER
-        $laporanTerakhir = $this->model('LaporanModel')
-                                ->getLatestByUser($userId);
+    // LAPORAN TERAKHIR USER
+    $laporanTerakhir = $this->model('LaporanModel')
+                            ->getLatestByUser($userId);
 
-        // STATISTIK USER
-        $master = $this->model('Master');
-        $total  = $master->countByUser($userId);
-        $status = $master->countByStatusUser($userId);
+    // STATISTIK USER
+    $master = $this->model('Master');
+    $total  = $master->countByUser($userId);
+    $status = $master->countByStatusUser($userId);
 
-        $stat = [
-            'Diajukan' => 0,
-            'Diproses' => 0,
-            'Selesai'  => 0
-        ];
+    // ⬇️ SESUAIKAN DENGAN STATUS ASLI DI DATABASE
+    $stat = [
+        'Diajukan'      => 0,
+        'Proses'  => 0,
+        'Selesai'       => 0
+    ];
 
-        foreach ($status as $s) {
+    foreach ($status as $s) {
+        if (isset($stat[$s['status_laporan']])) {
             $stat[$s['status_laporan']] = $s['total'];
         }
-
-        $this->view('dashboard/petugas', [
-            'total_laporan'   => $total['total'],
-            'diproses'        => $stat['Diproses'],
-            'selesai'         => $stat['Selesai'],
-            'laporanTerakhir' => $laporanTerakhir
-        ]);
     }
+
+    $this->view('dashboard/petugas', [
+        'total_laporan'   => $total['total'],
+        'diproses'        => $stat['Proses'], 
+        'selesai'         => $stat['Selesai'],
+        'laporanTerakhir' => $laporanTerakhir
+    ]);
+}
 
     /**
      * ==========================

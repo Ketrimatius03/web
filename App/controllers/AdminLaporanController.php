@@ -92,7 +92,7 @@ class AdminLaporanController extends Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST['id_laporan'];
-            $status = $_POST['status']; // 'Proses', 'Selesai', 'Arsip'
+            $status = $_POST['status']; 
 
             $this->model('LaporanModel')->updateStatus($id, $status);
 

@@ -87,45 +87,53 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
             </div>
         </div>
 
-        <!-- CARD STATISTIK -->
-        <div class="row g-3 mb-4">
-            <div class="col-md-3">
-                <div class="card-stat blue">
-                    <div>
-                        <small>Laporan Masuk</small>
-                        <h3><?= $laporanMasuk ?></h3>
-                    </div>
-                    <i class="bi bi-inbox"></i>
-                </div>
+       <div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card-stat blue">
+            <div>
+                <small>Laporan Masuk</small>
+                <h3><?= $laporanMasuk ?></h3>
             </div>
-            <div class="col-md-3">
-                <div class="card-stat yellow">
-                    <div>
-                        <small>Dalam Proses</small>
-                        <h3><?= $dalamProses ?></h3>
-                    </div>
-                    <i class="bi bi-hourglass-split"></i>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card-stat green">
-                    <div>
-                        <small>Selesai</small>
-                        <h3><?= $selesai ?></h3>
-                    </div>
-                    <i class="bi bi-check-circle"></i>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card-stat gray">
-                    <div>
-                        <small>Diarsipkan</small>
-                        <h3><?= $diarsipkan ?></h3>
-                    </div>
-                    <i class="bi bi-archive"></i>
-                </div>
-            </div>
+            <i class="bi bi-inbox"></i>
         </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-stat yellow">
+            <div>
+                <small>Dalam Proses</small>
+                <h3><?= $dalamProses ?></h3>
+            </div>
+            <i class="bi bi-hourglass-split"></i>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-stat green">
+            <div>
+                <small>Selesai</small>
+                <h3><?= $selesai ?></h3>
+            </div>
+            <i class="bi bi-check-circle"></i>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-stat gray">
+            <div>
+                <small>Diarsipkan</small>
+                <h3><?= $diarsipkan ?></h3>
+            </div>
+            <i class="bi bi-archive"></i>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
 
         <!-- CHART -->
         <div class="card p-4">

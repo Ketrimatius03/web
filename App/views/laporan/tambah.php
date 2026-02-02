@@ -55,6 +55,7 @@
                                     <option value="">-- Pilih --</option>
                                     <option value="Hardware">Hardware</option>
                                     <option value="Software">Software</option>
+                                    <option value="Software">Gangguan Jaringan</option>
                                 </select>
                             </div>
 

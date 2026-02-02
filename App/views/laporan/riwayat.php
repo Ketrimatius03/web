@@ -40,38 +40,45 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'user') {
         </tr>
     </thead>
     <tbody>
-        <?php if (!empty($laporan)) : ?>
-            <?php $no = 1; foreach ($laporan as $row) : ?>
-            <tr>
-                <td><?= $no++ ?></td>
-                <td><?= date('d M Y', strtotime($row['created_at'])) ?></td>
-                <td><?= htmlspecialchars($row['jenis_masalah']) ?></td>
-                <td><?= htmlspecialchars(substr($row['deskripsi'], 0, 50)) ?>...</td>
-                <td>
-                    <?php if ($row['status_laporan'] == 'Diajukan') : ?>
-                        <span class="badge bg-secondary">Diajukan</span>
-                    <?php elseif ($row['status_laporan'] == 'Diproses') : ?>
-                        <span class="badge bg-warning">Diproses</span>
-                    <?php else : ?>
-                        <span class="badge bg-success">Selesai</span>
-                    <?php endif; ?>
-                </td>
-                <td>
-                    <a href="<?= BASEURL ?>/laporan/detail/<?= $row['id_laporan']; ?>"
-                       class="btn btn-sm btn-primary">
-                        Detail
-                    </a>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        <?php else : ?>
-            <tr>
-                <td colspan="6" class="text-center text-muted">
-                    Belum ada laporan
-                </td>
-            </tr>
-        <?php endif; ?>
-    </tbody>
+<?php if (!empty($laporan)) : ?>
+    <?php $no = 1; foreach ($laporan as $row) : ?>
+    <tr>
+        <td><?= $no++ ?></td>
+        <td><?= date('d M Y', strtotime($row['created_at'])) ?></td>
+
+        <!-- NAMA PELAPOR (FIX DI SINI) -->
+        <td><?= htmlspecialchars($row['nama_pelapor']) ?></td>
+
+        <td><?= htmlspecialchars($row['jenis_masalah']) ?></td>
+
+        <td><?= htmlspecialchars(substr($row['deskripsi'], 0, 50)) ?>...</td>
+
+        <td>
+            <?php if ($row['status_laporan'] == 'Diajukan') : ?>
+                <span class="badge bg-secondary">Diajukan</span>
+            <?php elseif ($row['status_laporan'] == 'Diproses') : ?>
+                <span class="badge bg-warning">Diproses</span>
+            <?php else : ?>
+                <span class="badge bg-success">Selesai</span>
+            <?php endif; ?>
+        </td>
+
+        <td>
+            <a href="<?= BASEURL ?>/laporan/detail/<?= $row['id_laporan']; ?>"
+               class="btn btn-sm btn-primary">
+                Detail
+            </a>
+        </td>
+    </tr>
+    <?php endforeach; ?>
+<?php else : ?>
+    <tr>
+        <td colspan="7" class="text-center text-muted">
+            Belum ada laporan
+        </td>
+    </tr>
+<?php endif; ?>
+</tbody>
 </table>
 
             </div>

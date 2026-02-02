@@ -77,7 +77,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'user') {
             </div>
             <div class="col-md-4">
                 <div class="card card-stat">
-                    <p>Sedang Diproses</p>
+                    <p>Dalam Proses</p>
                     <h3><?= $diproses ?></h3>
                 </div>
             </div>
@@ -112,12 +112,15 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'user') {
     <td><?= htmlspecialchars($row['jenis_masalah']) ?></td>
     <td>
         <?php if ($row['status_laporan'] == 'Diajukan') : ?>
-            <span class="badge bg-secondary">Diajukan</span>
-        <?php elseif ($row['status_laporan'] == 'Diproses') : ?>
-            <span class="badge bg-warning">Diproses</span>
+        <span class="badge bg-secondary">Diajukan</span>
+        <?php elseif ($row['status_laporan'] == 'Proses') : ?>
+        <span class="badge bg-warning">Proses</span>
+        <?php elseif ($row['status_laporan'] == 'Selesai') : ?>
+        <span class="badge bg-success">Selesai</span>
         <?php else : ?>
-            <span class="badge bg-success">Selesai</span>
-        <?php endif; ?>
+        <span class="badge bg-dark"><?= htmlspecialchars($row['status_laporan']) ?></span>
+     <?php endif; ?>
+
     </td>
 </tr>
 <?php endforeach; ?>

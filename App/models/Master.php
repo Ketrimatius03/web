@@ -100,5 +100,27 @@ public function tambahLaporan($data)
     return $this->db->execute();
 }
 
+// ===============================
+// SEARCH LAPORAN (ADMIN)
+// ===============================
+public function searchLaporan($keyword)
+{
+    $this->db->query("
+        SELECT *
+        FROM master_laporan
+        WHERE 
+            jenis_masalah LIKE ?
+            OR kategori_masalah LIKE ?
+            OR deskripsi LIKE ?
+        ORDER BY created_at DESC
+    ");
+
+    $like = "%$keyword%";
+    $this->db->bind('sss', $like, $like, $like);
+
+    return $this->db->resultSet();
+}
+
+
 
 }
