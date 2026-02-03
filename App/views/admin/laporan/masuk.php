@@ -96,24 +96,35 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
                             </td>
 
                             <!-- UBAH STATUS -->
-                            <td>
-                                <form action="<?= BASEURL ?>/adminlaporan/updateStatus" method="post">
-                                    <input type="hidden" name="id_laporan" value="<?= $row['id_laporan'] ?>">
+                        <td>
+                           <form action="<?= BASEURL ?>/dashboard/kirimSolusi"
+                             method="post"
+                               enctype="multipart/form-data">
 
-                                    <select name="status" class="form-select form-select-sm mb-1" required>
-                                        <option value="">-- Pilih --</option>
-                                        <option value="Proses">Dalam Proses</option>
-                                        <option value="Selesai">Selesai</option>
-                                        <option value="Arsip">Diarsipkan</option>
-                                    </select>
+                                   <input type="hidden" name="id_laporan" value="<?= $row['id_laporan'] ?>">
 
-                                    <button type="submit"
-                                            class="btn btn-success btn-sm w-100"
-                                            onclick="return confirm('Ubah status laporan?')">
-                                        Simpan
-                                    </button>
-                                </form>
-                            </td>
+                       <!-- FILE SOLUSI -->
+                     <input type="file"
+                         name="solusi"
+                            class="form-control form-control-sm mb-2"
+                            accept=".pdf,.jpg,.jpeg,.png">
+
+                  <!-- STATUS -->
+                   <select name="status" class="form-select form-select-sm mb-2" required>
+                   <option value="Proses">Dalam Proses</option>
+                    <option value="Selesai">Selesai</option>
+                     <option value="Arsip">Diarsipkan</option>
+                </select>
+
+             <button type="submit"
+            class="btn btn-success btn-sm w-100">
+        Kirim Solusi
+    </button>
+</form>
+ 
+         
+                        </td>
+
                         </tr>
 
                         <?php endforeach; ?>

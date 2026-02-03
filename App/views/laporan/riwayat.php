@@ -69,6 +69,18 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'user') {
                 Detail
             </a>
         </td>
+
+        <?php if (!empty($row['solusi'])) : ?>
+    <a href="<?= BASEURL ?>/uploads/solusi/<?= $row['solusi'] ?>"
+       target="_blank"
+       class="btn btn-sm btn-outline-success">
+        <i class="bi bi-file-earmark"></i> Lihat Solusi
+    </a>
+<?php else : ?>
+    <span class="text-muted">Belum ada</span>
+<?php endif; ?>
+
+
     </tr>
     <?php endforeach; ?>
 <?php else : ?>

@@ -121,6 +121,66 @@ public function searchLaporan($keyword)
     return $this->db->resultSet();
 }
 
+public function updateSolusiFile($id, $file, $status)
+{
+    $this->db->query("
+        UPDATE master_laporan
+        SET solusi_file = ?, status_laporan = ?
+        WHERE id_laporan = ?
+    ");
+
+    $this->db->bind('ssi', $file, $status, $id);
+    return $this->db->execute();
+}
+
+
+public function kirimSolusi()
+{
+    $this->auth('admin');
+
+    $id = $_POST['id_laporan'];
+    $status = $_POST['status'];
+
+    $fileName = null;
+
+    if (!empty($_FILES['solusi']['name'])) {
+
+        $ext = pathinfo($_FILES['solusi']['name'], PATHINFO_EXTENSION);
+        $fileName = 'solusi_' . time() . '.' . $ext;
+
+        $target = ROOT . '/public/uploads/solusi/' . $fileName;
+        move_uploaded_file($_FILES['solusi']['tmp_name'], $target);
+    }
+
+    $this->model('Master')->updateSolusiFile(
+        $id,
+        $fileName,
+        $status
+    );
+
+    header('Location: ' . BASEURL . '/dashboard/laporanMasuk');
+    exit;
+}
+
+public function getLaporanByUser($id_user)
+{
+    $this->db->query("
+        SELECT 
+            id_laporan,
+            jenis_masalah,
+            kategori_masalah,
+            status_laporan,
+            solusi_file,
+            created_at
+        FROM master_laporan
+        WHERE id_user = ?
+        ORDER BY created_at DESC
+    ");
+
+    $this->db->bind('i', $id_user);
+    return $this->db->resultSet();
+}
+
 
 
 }

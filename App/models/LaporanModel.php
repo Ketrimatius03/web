@@ -75,17 +75,18 @@ public function getByUser($userId)
     return $this->db->resultSet();
 }
 
+public function getById($id)
+{
+    $this->db->query("
+        SELECT id_laporan, id_user, solusi_file
+        FROM master_laporan
+        WHERE id_laporan = ?
+    ");
+    $this->db->bind("i", $id);
+    return $this->db->single();
+}
 
 
-    public function getById($id)
-    {
-        $this->db->query("
-            SELECT * FROM master_laporan
-            WHERE id_laporan = ?
-        ");
-        $this->db->bind("i", $id);
-        return $this->db->single();
-    }
 
     public function getByStatus($status)
     {
@@ -124,4 +125,18 @@ public function getByUser($userId)
         ");
         return $this->db->resultSet();
     }
+public function updateSolusi($id, $file, $status)
+{
+    $this->db->query("
+        UPDATE master_laporan
+        SET solusi_file = ?, status_laporan = ?
+        WHERE id_laporan = ?
+    ");
+   $this->model->updateSolusi($id, $file, $status);
+    return $this->db->execute();
+}
+
+
+
+
 }

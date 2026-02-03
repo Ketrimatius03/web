@@ -3,7 +3,9 @@
 class DashboardController extends Controller
 {
     /**
-     * Redirect otomatis sesuai role user
+     * ==========================
+     * REDIRECT SESUAI ROLE
+     * ==========================
      */
     public function index()
     {
@@ -25,99 +27,191 @@ class DashboardController extends Controller
      * DASHBOARD ADMIN
      * ==========================
      */
-  public function admin()
-{
-    $this->auth('admin');
+    public function admin()
+    {
+        $this->auth('admin');
 
-    $master = $this->model('Master');
+        $master = $this->model('Master');
 
-    // AMBIL DATA STATUS
-    $status = $master->countByStatus();
+        $status = $master->countByStatus();
 
-    // DEFAULT NILAI (WAJIB)
-    $laporanMasuk = 0;
-    $dalamProses  = 0;
-    $selesai      = 0;
-    $diarsipkan   = 0;
+        $laporanMasuk = 0;
+        $dalamProses  = 0;
+        $selesai      = 0;
+        $diarsipkan   = 0;
 
-    foreach ($status as $s) {
-        switch ($s['status_laporan']) {
-            case 'Diajukan':
-                $laporanMasuk = $s['total'];
-                break;
-            case 'Proses':
-                $dalamProses = $s['total'];
-                break;
-            case 'Selesai':
-                $selesai = $s['total'];
-                break;
-            case 'Arsip':
-                $diarsipkan = $s['total'];
-                break;
+        foreach ($status as $s) {
+            switch ($s['status_laporan']) {
+                case 'Diajukan':
+                    $laporanMasuk = $s['total'];
+                    break;
+                case 'Proses':
+                    $dalamProses = $s['total'];
+                    break;
+                case 'Selesai':
+                    $selesai = $s['total'];
+                    break;
+                case 'Arsip':
+                    $diarsipkan = $s['total'];
+                    break;
+            }
         }
+
+        $chartData = $master->laporan7Hari();
+        $hari = [];
+        $dataLaporan = [];
+
+        foreach ($chartData as $row) {
+            $hari[] = date('d M', strtotime($row['hari']));
+            $dataLaporan[] = $row['total'];
+        }
+
+        $this->view('dashboard/admin', [
+            'laporanMasuk' => $laporanMasuk,
+            'dalamProses'  => $dalamProses,
+            'selesai'      => $selesai,
+            'diarsipkan'   => $diarsipkan,
+            'hari'         => $hari,
+            'dataLaporan'  => $dataLaporan
+        ]);
     }
-
-    // DATA CHART
-    $chartData = $master->laporan7Hari();
-    $hari = [];
-    $dataLaporan = [];
-
-    foreach ($chartData as $row) {
-        $hari[] = date('d M', strtotime($row['hari']));
-        $dataLaporan[] = $row['total'];
-    }
-
-    // KIRIM KE VIEW (SESUAI admin.php)
-    $this->view('dashboard/admin', [
-        'laporanMasuk' => $laporanMasuk,
-        'dalamProses'  => $dalamProses,
-        'selesai'      => $selesai,
-        'diarsipkan'   => $diarsipkan,
-        'hari'         => $hari,
-        'dataLaporan'  => $dataLaporan
-    ]);
-}
-
 
     /**
      * ==========================
-     * DASHBOARD PETUGAS / USER
+     * DASHBOARD PETUGAS
      * ==========================
      */
     public function petugas()
+    {
+        $this->auth('user');
+
+        $userId = $_SESSION['user']['id'];
+
+        $laporanTerakhir = $this->model('LaporanModel')
+                                ->getLatestByUser($userId);
+
+        $master = $this->model('Master');
+        $total  = $master->countByUser($userId);
+        $status = $master->countByStatusUser($userId);
+
+        $stat = [
+            'Diajukan' => 0,
+            'Proses'   => 0,
+            'Selesai'  => 0
+        ];
+
+        foreach ($status as $s) {
+            if (isset($stat[$s['status_laporan']])) {
+                $stat[$s['status_laporan']] = $s['total'];
+            }
+        }
+
+        $this->view('dashboard/petugas', [
+            'total_laporan'   => $total['total'],
+            'diproses'        => $stat['Proses'],
+            'selesai'         => $stat['Selesai'],
+            'laporanTerakhir' => $laporanTerakhir
+        ]);
+    }
+
+    /**
+     * ==========================
+     * LAPORAN MASUK ADMIN
+     * ==========================
+     */
+    public function laporanMasuk()
+    {
+        $this->auth('admin');
+
+        $laporan = $this->model('LaporanModel')->getByStatus('Diajukan');
+
+        $this->view('admin/laporan/masuk', [
+            'laporan' => $laporan
+        ]);
+    }
+
+    /**
+     * ==========================
+     * KIRIM SOLUSI 
+     * ==========================
+     */
+public function kirimSolusi()
+{
+    $this->auth('admin');
+
+    $id     = $_POST['id_laporan'];
+    $status = $_POST['status'];
+
+    // solusi teks (boleh kosong)
+    $solusiText = $_POST['solusi'] ?? null;
+
+    $fileName = null;
+
+    if (!empty($_FILES['solusi_file']['name'])) {
+
+        $allowed = ['jpg','jpeg','png','pdf'];
+        $ext = strtolower(pathinfo($_FILES['solusi_file']['name'], PATHINFO_EXTENSION));
+
+        if (!in_array($ext, $allowed)) {
+            die('Format file tidak didukung');
+        }
+
+        $folder = ROOT . '/../storage/solusi/';
+
+        if (!is_dir($folder)) {
+            mkdir($folder, 0777, true);
+        }
+
+        $fileName = 'solusi_' . time() . '.' . $ext;
+
+        move_uploaded_file(
+            $_FILES['solusi_file']['tmp_name'],
+            $folder . $fileName
+        );
+    }
+
+    // 🔥 INI YANG PENTING (4 PARAMETER)
+    $this->model('LaporanModel')->updateSolusi(
+        $id,
+        $solusiText,
+        $fileName,
+        $status
+    );
+
+    header('Location: ' . BASEURL . '/dashboard/laporanMasuk');
+    exit;
+}
+
+
+
+public function lihatSolusi($id)
 {
     $this->auth('user');
 
-    $userId = $_SESSION['user']['id'];
+    $laporan = $this->model('LaporanModel')->getById($id);
 
-    // LAPORAN TERAKHIR USER
-    $laporanTerakhir = $this->model('LaporanModel')
-                            ->getLatestByUser($userId);
-
-    // STATISTIK USER
-    $master = $this->model('Master');
-    $total  = $master->countByUser($userId);
-    $status = $master->countByStatusUser($userId);
-
-    // ⬇️ SESUAIKAN DENGAN STATUS ASLI DI DATABASE
-    $stat = [
-        'Diajukan'      => 0,
-        'Proses'  => 0,
-        'Selesai'       => 0
-    ];
-
-    foreach ($status as $s) {
-        if (isset($stat[$s['status_laporan']])) {
-            $stat[$s['status_laporan']] = $s['total'];
-        }
+    // cek kepemilikan laporan
+    if ($laporan['id_user'] != $_SESSION['user']['id']) {
+        die('Akses ditolak');
     }
 
-    $this->view('dashboard/petugas', [
-        'total_laporan'   => $total['total'],
-        'diproses'        => $stat['Proses'], 
-        'selesai'         => $stat['Selesai'],
-        'laporanTerakhir' => $laporanTerakhir
-    ]);
+    if (empty($laporan['solusi_file'])) {
+        die('Solusi belum tersedia');
+    }
+
+    $path = ROOT . '/../storage/solusi/' . $laporan['solusi_file'];
+
+
+    if (!file_exists($path)) {
+        die('File tidak ditemukan');
+    }
+
+    header('Content-Type: ' . mime_content_type($path));
+    header('Content-Disposition: inline; filename="' . basename($path) . '"');
+    header('Content-Length: ' . filesize($path));
+
+    readfile($path);
+    exit;
 }
 
     /**
@@ -131,17 +225,4 @@ class DashboardController extends Controller
         header('Location: ' . BASEURL . '/auth/login');
         exit;
     }
-
-    // LAPORAN MASUK ADMIN
-public function laporanMasuk()
-{
-    $this->auth('admin');
-
-    $laporan = $this->model('LaporanModel')->getByStatus('Diajukan');
-
-    $this->view('admin/laporan/masuk', [
-        'laporan' => $laporan
-    ]);
-}
-
 }

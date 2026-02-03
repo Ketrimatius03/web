@@ -130,11 +130,6 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
 </div>
 
 
-
-
-
-
-
         <!-- CHART -->
         <div class="card p-4">
             <h5>Statistik Laporan (7 Hari Terakhir)</h5>

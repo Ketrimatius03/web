@@ -4,7 +4,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'user') {
     exit;
 }
 ?>
- 
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -16,42 +16,41 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'user') {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
     <!-- CSS khusus dashboard -->
-    <link rel="stylesheet" href="/web_ms/public/assets/css/petugas.css">
+    <link rel="stylesheet" href="<?= BASEURL ?>/assets/css/petugas.css">
 </head>
 <body>
 
 <div class="d-flex">
 
     <!-- SIDEBAR -->
-   <div class="sidebar d-flex flex-column">
-    <h4 class="text-center fw-bold mb-4">SIMS</h4>
+    <div class="sidebar d-flex flex-column">
+        <h4 class="text-center fw-bold mb-4">SIMS</h4>
 
-    <ul class="nav flex-column px-2">
-        <li class="nav-item">
-            <a href="<?= BASEURL ?>/dashboard/petugas" class="nav-link active">
-                <i class="fa fa-gauge"></i> Dashboard
-            </a>
-        </li>
+        <ul class="nav flex-column px-2">
+            <li class="nav-item">
+                <a href="<?= BASEURL ?>/dashboard/petugas" class="nav-link active">
+                    <i class="fa fa-gauge"></i> Dashboard
+                </a>
+            </li>
 
-        <li class="nav-item">
-            <a href="<?= BASEURL ?>/laporan/tambah" class="nav-link">
-                <i class="fa fa-plus"></i> Buat Laporan
-            </a>
-        </li>
+            <li class="nav-item">
+                <a href="<?= BASEURL ?>/laporan/tambah" class="nav-link">
+                    <i class="fa fa-plus"></i> Buat Laporan
+                </a>
+            </li>
 
-        <li class="nav-item">
-            <a href="<?= BASEURL ?>/laporan/riwayat" class="nav-link">
-                <i class="fa fa-clock"></i> Riwayat Laporan
-            </a>
-        </li>
-    </ul>
+            <li class="nav-item">
+                <a href="<?= BASEURL ?>/laporan/riwayat" class="nav-link">
+                    <i class="fa fa-clock"></i> Riwayat Laporan
+                </a>
+            </li>
+        </ul>
 
-    <div class="mt-auto px-3 pb-3">
-        <a href="<?= BASEURL ?>/auth/logout" class="logout">Logout</a><br>
-        <span class="role">Petugas</span>
+        <div class="mt-auto px-3 pb-3">
+            <a href="<?= BASEURL ?>/auth/logout" class="logout">Logout</a><br>
+            <span class="role">Petugas</span>
+        </div>
     </div>
-</div>
-
 
     <!-- CONTENT -->
     <div class="content">
@@ -89,22 +88,22 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'user') {
             </div>
         </div>
 
-        <!-- LAPORAN TERAKHIR -->
+        <!-- LAPORAN TERAKHIR + SOLUSI -->
         <div class="card">
             <div class="card-body">
-                <div class="d-flex justify-content-between mb-3">
-                    <h6 class="fw-bold">Laporan Terakhir</h6>
-                </div>
+                <h6 class="fw-bold mb-3">Laporan Terakhir</h6>
 
-                <table class="table align-middle">
-                    <thead>
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-light">
                         <tr>
                             <th>Tanggal</th>
                             <th>Judul Masalah</th>
                             <th>Status</th>
+                            <th>Solusi</th>
                         </tr>
                     </thead>
                     <tbody>
+
 <?php if (!empty($laporanTerakhir)) : ?>
 <?php foreach ($laporanTerakhir as $row) : ?>
 <tr>
@@ -112,27 +111,44 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'user') {
     <td><?= htmlspecialchars($row['jenis_masalah']) ?></td>
     <td>
         <?php if ($row['status_laporan'] == 'Diajukan') : ?>
-        <span class="badge bg-secondary">Diajukan</span>
+            <span class="badge bg-secondary">Diajukan</span>
         <?php elseif ($row['status_laporan'] == 'Proses') : ?>
-        <span class="badge bg-warning">Proses</span>
+            <span class="badge bg-warning">Proses</span>
         <?php elseif ($row['status_laporan'] == 'Selesai') : ?>
-        <span class="badge bg-success">Selesai</span>
+            <span class="badge bg-success">Selesai</span>
         <?php else : ?>
-        <span class="badge bg-dark"><?= htmlspecialchars($row['status_laporan']) ?></span>
-     <?php endif; ?>
-
+            <span class="badge bg-dark">
+                <?= htmlspecialchars($row['status_laporan']) ?>
+            </span>
+        <?php endif; ?>
     </td>
+
+    <!-- SOLUSI -->
+<td>
+<?php if (!empty($row['solusi_file'])) : ?>
+    <a href="<?= BASEURL ?>/dashboard/lihatSolusi/<?= $row['id_laporan'] ?>"
+       class="btn btn-sm btn-success">
+        📄 Lihat Solusi
+    </a>
+<?php else : ?>
+    <span class="text-muted">Belum ada</span>
+<?php endif; ?>
+</td>
+
+
 </tr>
 <?php endforeach; ?>
 <?php else : ?>
 <tr>
-    <td colspan="3" class="text-center text-muted">
+    <td colspan="4" class="text-center text-muted">
         Belum ada laporan
     </td>
 </tr>
 <?php endif; ?>
-</tbody>
 
+                    </tbody>
+
+                    
                 </table>
 
             </div>
@@ -142,5 +158,11 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'user') {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function toggleSolusi(id) {
+    const el = document.getElementById(id);
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+</script>
 </body>
 </html>
