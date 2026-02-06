@@ -103,24 +103,28 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
 
                                    <input type="hidden" name="id_laporan" value="<?= $row['id_laporan'] ?>">
 
-                       <!-- FILE SOLUSI -->
-                     <input type="file"
-                         name="solusi"
-                            class="form-control form-control-sm mb-2"
-                            accept=".pdf,.jpg,.jpeg,.png">
+                       <form action="<?= BASEURL ?>/dashboard/kirimSolusi" method="post">
 
-                  <!-- STATUS -->
-                   <select name="status" class="form-select form-select-sm mb-2" required>
-                   <option value="Proses">Dalam Proses</option>
-                    <option value="Selesai">Selesai</option>
-                     <option value="Arsip">Diarsipkan</option>
-                </select>
+                       <input type="hidden" name="id_laporan" value="<?= $row['id_laporan'] ?>">
 
-             <button type="submit"
-            class="btn btn-success btn-sm w-100">
-        Kirim Solusi
-    </button>
-</form>
+                 <!-- SOLUSI TEXT -->
+                     <textarea name="solusi"
+                     class="form-control form-control-sm mb-2"
+                     placeholder="Tulis solusi..."
+                     required></textarea>
+
+                 <!-- STATUS -->
+                 <select name="status" class="form-select form-select-sm mb-2" required>
+                 <option value="Proses">Dalam Proses</option>
+                 <option value="Selesai">Selesai</option>
+                 <option value="Arsip">Diarsipkan</option>
+                 </select>
+
+                <button type="submit" class="btn btn-success btn-sm w-100">
+                      Simpan
+                </button>
+            </form>
+
  
          
                         </td>

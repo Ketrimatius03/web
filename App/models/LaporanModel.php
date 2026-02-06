@@ -71,9 +71,9 @@ public function getByUser($userId)
         ORDER BY created_at DESC
     ");
     $this->db->bind("i", $userId);
-
     return $this->db->resultSet();
 }
+
 
 public function getById($id)
 {
@@ -125,16 +125,26 @@ public function getById($id)
         ");
         return $this->db->resultSet();
     }
-public function updateSolusi($id, $file, $status)
+public function updateSolusi($id, $solusi, $status)
 {
-    $this->db->query("
+    $query = "
         UPDATE master_laporan
-        SET solusi_file = ?, status_laporan = ?
+        SET
+            solusi_text = ?,
+            status_laporan = ?
         WHERE id_laporan = ?
-    ");
-   $this->model->updateSolusi($id, $file, $status);
+    ";
+
+    $this->db->query($query);
+    $this->db->bind("ssi",
+        $solusi,
+        $status,
+        $id
+    );
+
     return $this->db->execute();
 }
+
 
 
 

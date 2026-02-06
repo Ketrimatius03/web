@@ -141,40 +141,11 @@ public function kirimSolusi()
 
     $id     = $_POST['id_laporan'];
     $status = $_POST['status'];
+    $solusi = $_POST['solusi'];
 
-    // solusi teks (boleh kosong)
-    $solusiText = $_POST['solusi'] ?? null;
-
-    $fileName = null;
-
-    if (!empty($_FILES['solusi_file']['name'])) {
-
-        $allowed = ['jpg','jpeg','png','pdf'];
-        $ext = strtolower(pathinfo($_FILES['solusi_file']['name'], PATHINFO_EXTENSION));
-
-        if (!in_array($ext, $allowed)) {
-            die('Format file tidak didukung');
-        }
-
-        $folder = ROOT . '/../storage/solusi/';
-
-        if (!is_dir($folder)) {
-            mkdir($folder, 0777, true);
-        }
-
-        $fileName = 'solusi_' . time() . '.' . $ext;
-
-        move_uploaded_file(
-            $_FILES['solusi_file']['tmp_name'],
-            $folder . $fileName
-        );
-    }
-
-    // 🔥 INI YANG PENTING (4 PARAMETER)
     $this->model('LaporanModel')->updateSolusi(
         $id,
-        $solusiText,
-        $fileName,
+        $solusi,
         $status
     );
 
