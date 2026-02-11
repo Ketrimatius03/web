@@ -9,9 +9,9 @@ class LaporanModel
         $this->db = new Database();
     }
 
-    /* ===============================
+    /* =========================
        INSERT LAPORAN
-    =============================== */
+    ========================= */
     public function insertLaporan($data)
     {
         $query = "INSERT INTO master_laporan (
@@ -38,55 +38,38 @@ class LaporanModel
         return $this->db->execute();
     }
 
-    /* ===============================
-       DATA LAPORAN
-    =============================== */
-    public function getAll()
+    /* =========================
+       GET DATA
+    ========================= */
+    public function getById($id)
     {
-        $this->db->query("SELECT * FROM master_laporan ORDER BY created_at DESC");
+        $this->db->query("SELECT * FROM master_laporan WHERE id_laporan = ?");
+        $this->db->bind("i", $id);
+        return $this->db->single();
+    }
+
+    public function getByUser($userId)
+    {
+        $this->db->query("
+            SELECT * FROM master_laporan
+            WHERE id_user = ?
+            ORDER BY created_at DESC
+        ");
+        $this->db->bind("i", $userId);
         return $this->db->resultSet();
     }
 
-  public function getLatestByUser($userId, $limit = 5)
-{
-    $query = "
-        SELECT *
-        FROM master_laporan
-        WHERE id_user = ?
-        ORDER BY created_at DESC
-        LIMIT ?
-    ";
-
-    $this->db->query($query);
-    $this->db->bind("ii", $userId, $limit);
-
-    return $this->db->resultSet();
-}
-public function getByUser($userId)
-{
-    $this->db->query("
-        SELECT *
-        FROM master_laporan
-        WHERE id_user = ?
-        ORDER BY created_at DESC
-    ");
-    $this->db->bind("i", $userId);
-    return $this->db->resultSet();
-}
-
-
-public function getById($id)
-{
-    $this->db->query("
-        SELECT id_laporan, id_user, solusi_file
-        FROM master_laporan
-        WHERE id_laporan = ?
-    ");
-    $this->db->bind("i", $id);
-    return $this->db->single();
-}
-
-
+    public function getLatestByUser($userId, $limit = 5)
+    {
+        $this->db->query("
+            SELECT * FROM master_laporan
+            WHERE id_user = ?
+            ORDER BY created_at DESC
+            LIMIT ?
+        ");
+        $this->db->bind("ii", $userId, $limit);
+        return $this->db->resultSet();
+    }
 
     public function getByStatus($status)
     {
@@ -99,54 +82,91 @@ public function getById($id)
         return $this->db->resultSet();
     }
 
-    /* ===============================
-       UPDATE STATUS (INI YANG ERROR TADI)
-    =============================== */
-    public function updateStatus($id_laporan, $status)
+    public function getRiwayat()
+    {
+        $this->db->query("
+            SELECT * FROM master_laporan
+            WHERE status_laporan IN ('Selesai','Arsip')
+            ORDER BY created_at DESC
+        ");
+        return $this->db->resultSet();
+    }
+
+    /* =========================
+       UPDATE
+    ========================= */
+    public function updateStatus($id, $status)
     {
         $this->db->query("
             UPDATE master_laporan
             SET status_laporan = ?
             WHERE id_laporan = ?
         ");
-        $this->db->bind("si", $status, $id_laporan);
+        $this->db->bind("si", $status, $id);
         return $this->db->execute();
     }
 
-    /* ===============================
-       RIWAYAT & ARSIP ADMIN
-    =============================== */
-    public function getRiwayat()
+    public function updateSolusi($id, $solusi, $status)
+    {
+        $this->db->query("
+            UPDATE master_laporan
+            SET solusi = ?, status_laporan = ?
+            WHERE id_laporan = ?
+        ");
+        $this->db->bind("ssi", $solusi, $status, $id);
+        return $this->db->execute();
+    }
+
+    /* =========================
+       LAPORAN MASUK (TANPA PAGINATION)
+    ========================= */
+    public function getLaporanMasuk()
     {
         $this->db->query("
             SELECT * FROM master_laporan
-            WHERE status_laporan IN ('Proses', 'Selesai', 'Arsip')
+            WHERE status_laporan IN ('Diajukan','Proses')
             ORDER BY created_at DESC
         ");
         return $this->db->resultSet();
     }
-public function updateSolusi($id, $solusi, $status)
+
+    /* =========================
+       PAGINATION ADMIN
+    ========================= */
+public function getLaporanMasukLimit($limit, $offset)
 {
-    $query = "
-        UPDATE master_laporan
-        SET
-            solusi_text = ?,
-            status_laporan = ?
-        WHERE id_laporan = ?
+    $sql = "
+        SELECT *
+        FROM master_laporan
+        WHERE status_laporan IN ('Diajukan','Proses')
+        ORDER BY id_laporan DESC
+        LIMIT ? OFFSET ?
     ";
 
-    $this->db->query($query);
-    $this->db->bind("ssi",
-        $solusi,
-        $status,
-        $id
-    );
+    $this->db->query($sql);
 
-    return $this->db->execute();
+    $this->db->bind("ii", $limit, $offset);
+
+    return $this->db->resultSet();
 }
 
 
+    public function countLaporanMasuk()
+    {
+        $this->db->query("
+            SELECT COUNT(*) AS total
+            FROM master_laporan
+            WHERE status_laporan IN ('Diajukan','Proses')
+        ");
+        return $this->db->single()['total'];
+    }
 
-
-
+    /* =========================
+       FIX TOTAL (JANGAN HAPUS)
+    ========================= */
+    public function countAll()
+    {
+        $this->db->query("SELECT COUNT(*) as total FROM master_laporan");
+        return $this->db->single()['total'];
+    }
 }

@@ -54,21 +54,18 @@
 
         <hr>
 
-        <div class="detail-label mb-2">Uraian Lengkap</div>
-        <div class="detail-description">
-            <?= nl2br(htmlspecialchars($laporan['deskripsi'])) ?>
-        </div>
+       <div class="detail-label mb-2">Solusi dari Admin</div>
 
-        <?php if ($laporan['lampiran']) : ?>
-            <div class="mt-3">
-                <div class="detail-label mb-1">Lampiran</div>
-                <a href="<?= BASEURL ?>/uploads/<?= $laporan['lampiran'] ?>"
-                   target="_blank"
-                   class="btn btn-outline-primary btn-sm">
-                    Lihat Lampiran
-                </a>
-            </div>
-        <?php endif; ?>
+       <?php if (!empty($laporan['solusi'])) : ?>
+       <div class="alert alert-success">
+        <?= nl2br(htmlspecialchars($laporan['solusi'])) ?>
+       </div>
+      <?php else : ?>
+      <div class="alert alert-warning">
+        Solusi belum diberikan oleh admin.
+       </div>
+      <?php endif; ?>
+
 
         <a href="<?= BASEURL ?>/laporan/riwayat"
            class="btn btn-secondary mt-4">

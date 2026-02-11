@@ -67,26 +67,43 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'user') {
         </div>
 
         <!-- CARD STATISTIK -->
-        <div class="row g-3 mb-4">
-            <div class="col-md-4">
-                <div class="card card-stat">
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card-stat stat-total">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
                     <p>Total Laporan</p>
                     <h3><?= $total_laporan ?></h3>
                 </div>
+                <i class="fa fa-file-alt stat-icon"></i>
             </div>
-            <div class="col-md-4">
-                <div class="card card-stat">
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card-stat stat-proses">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
                     <p>Dalam Proses</p>
                     <h3><?= $diproses ?></h3>
                 </div>
+                <i class="fa fa-spinner fa-spin stat-icon"></i>
             </div>
-            <div class="col-md-4">
-                <div class="card card-stat">
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card-stat stat-selesai">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
                     <p>Selesai</p>
                     <h3><?= $selesai ?></h3>
                 </div>
+                <i class="fa fa-check-circle stat-icon"></i>
             </div>
         </div>
+    </div>
+</div>
 
         <!-- LAPORAN TERAKHIR + SOLUSI -->
         <div class="card">
@@ -96,57 +113,95 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'user') {
                 <table class="table table-bordered table-hover align-middle">
                     <thead class="table-light">
                         <tr>
+                            <th>No</th>
                             <th>Tanggal</th>
+                             <th>Nama Pelapor</th>
                             <th>Judul Masalah</th>
+                            <th>Uraian Singkat</th>
                             <th>Status</th>
                             <th>Solusi</th>
+                            <th>Detail</th>
                         </tr>
                     </thead>
-                    <tbody>
-
+                  <tbody>
 <?php if (!empty($laporanTerakhir)) : ?>
-<?php foreach ($laporanTerakhir as $row) : ?>
+<?php $no = 1; foreach ($laporanTerakhir as $row) : ?>
 <tr>
+    <td><?= $no++ ?></td>
     <td><?= date('d M Y', strtotime($row['created_at'])) ?></td>
+    <td><?= htmlspecialchars($row['nama_pelapor']) ?></td>
     <td><?= htmlspecialchars($row['jenis_masalah']) ?></td>
+    <td><?= htmlspecialchars(substr($row['deskripsi'], 0, 40)) ?>...</td>
+
+    <!-- STATUS -->
     <td>
         <?php if ($row['status_laporan'] == 'Diajukan') : ?>
             <span class="badge bg-secondary">Diajukan</span>
         <?php elseif ($row['status_laporan'] == 'Proses') : ?>
-            <span class="badge bg-warning">Proses</span>
-        <?php elseif ($row['status_laporan'] == 'Selesai') : ?>
-            <span class="badge bg-success">Selesai</span>
+            <span class="badge bg-warning">Diproses</span>
         <?php else : ?>
-            <span class="badge bg-dark">
-                <?= htmlspecialchars($row['status_laporan']) ?>
-            </span>
+            <span class="badge bg-success">Selesai</span>
         <?php endif; ?>
     </td>
 
     <!-- SOLUSI -->
-<td>
-<?php if (!empty($row['solusi_file'])) : ?>
-    <a href="<?= BASEURL ?>/dashboard/lihatSolusi/<?= $row['id_laporan'] ?>"
-       class="btn btn-sm btn-success">
-        📄 Lihat Solusi
-    </a>
-<?php else : ?>
-    <span class="text-muted">Belum ada</span>
-<?php endif; ?>
-</td>
+    <td>
+    <?php if (!empty($row['solusi'])) : ?>
+        <button
+            class="btn btn-sm btn-outline-success"
+            data-bs-toggle="modal"
+            data-bs-target="#modalSolusi<?= $row['id_laporan']; ?>">
+            Lihat Solusi
+        </button>
 
+        <!-- MODAL SOLUSI -->
+        <div class="modal fade"
+             id="modalSolusi<?= $row['id_laporan']; ?>"
+             tabindex="-1"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
 
+                    <div class="modal-header">
+                        <h5 class="modal-title">Solusi Laporan</h5>
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="alert alert-success mb-0"
+                             style="white-space: pre-line;">
+                            <?= htmlspecialchars($row['solusi']) ?>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    <?php else : ?>
+        <span class="text-muted">Belum ada</span>
+    <?php endif; ?>
+    </td>
+
+    <!-- DETAIL -->
+    <td>
+        <a href="<?= BASEURL ?>/laporan/detail/<?= $row['id_laporan']; ?>"
+           class="btn btn-sm btn-primary">
+            Detail
+        </a>
+    </td>
 </tr>
 <?php endforeach; ?>
 <?php else : ?>
 <tr>
-    <td colspan="4" class="text-center text-muted">
+    <td colspan="7" class="text-center text-muted">
         Belum ada laporan
     </td>
 </tr>
 <?php endif; ?>
+</tbody>
 
-                    </tbody>
 
                     
                 </table>

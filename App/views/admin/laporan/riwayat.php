@@ -23,16 +23,17 @@ $judul = $judul ?? 'Riwayat & Arsip Laporan';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="<?= BASEURL ?>/assets/css/style.css">
+    <link rel="stylesheet" href="<?= BASEURL ?>/assets/css/masuk.css">
 </head>
 <body>
 
 <div class="d-flex">
 
+
     <!-- CONTENT -->
     <main class="content flex-fill p-4">
 
-        <h4 class="mb-3">📚 <?= $judul ?></h4>
+        <h4 class="mb-3"><?= $judul ?></h4>
 
         <div class="card shadow-sm">
             <div class="table-responsive">
@@ -95,11 +96,12 @@ $judul = $judul ?? 'Riwayat & Arsip Laporan';
 
                             <!-- SOLUSI -->
                             <td style="max-width:300px">
-                                <?php if (!empty($row['solusi_text'])) : ?>
-                                    <div class="small text-success">
-                                        <?= nl2br(htmlspecialchars($row['solusi_text'])) ?>
-                                    </div>
+                                <?php if (!empty($row['solusi'])) : ?>
+                                     <div class="small text-success">
+                                           <?= nl2br(htmlspecialchars($row['solusi'])) ?>
+                                     </div>
                                 <?php else : ?>
+
                                     <span class="text-muted small">
                                         Belum ada solusi
                                     </span>

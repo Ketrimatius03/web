@@ -2,7 +2,7 @@
    GLOBAL
 ===================== */
 body {
-    background: #f5f7fb;
+    background: #f1f5f9; 
     font-family: 'Segoe UI', sans-serif;
     margin: 0;
 }
@@ -26,9 +26,9 @@ body {
 
 /* LINK DI SIDEBAR */
 .sidebar .nav-item a {
-    color: inherit;              /* ikut warna nav-item */
-    text-decoration: none;       /* HILANGKAN GARIS BAWAH */
-    display: block;              /* satu baris penuh bisa diklik */
+    color: inherit;              
+    text-decoration: none;       
+    display: block;              
     padding: 12px;
     border-radius: 8px;
 }
@@ -67,30 +67,38 @@ body {
    CARD STATISTIK
 ===================== */
 .card-stat {
-    background: #ffffff;
-    border-radius: 12px;
+    border-radius: 14px;
     padding: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: #fff;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.card-stat small {
+    opacity: 0.9;
 }
 
 .card-stat i {
-    font-size: 35px;
+    font-size: 38px;
+    opacity: 0.9;
 }
 
-.card-stat.blue i {
-    color: #2563eb;
+/* WARNA KOTAK */
+.card-stat.blue {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
 }
 
-.card-stat.yellow i {
-    color: #facc15;
+.card-stat.yellow {
+    background: linear-gradient(135deg, #facc15, #ca8a04);
+    color: #000;
 }
 
-.card-stat.green i {
-    color: #16a34a;
+.card-stat.green {
+    background: linear-gradient(135deg, #16a34a, #065f46);
 }
 
-.card-stat.gray i {
-    color: #64748b;
+.card-stat.gray {
+    background: linear-gradient(135deg, #64748b, #334155);
 }

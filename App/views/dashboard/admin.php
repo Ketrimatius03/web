@@ -147,21 +147,37 @@ new Chart(ctx, {
         datasets: [{
             label: 'Laporan Masuk',
             data: <?= json_encode($dataLaporan) ?>,
+            borderColor: '#000',
+            backgroundColor: 'rgba(0,0,0,0.05)',
             borderWidth: 3,
             tension: 0.4,
-            fill: false
+            fill: true,
+            pointBackgroundColor: '#000',
+            pointBorderColor: '#000'
         }]
     },
     options: {
         responsive: true,
         scales: {
+            x: {
+                ticks: { color: '#000' },
+                grid: { color: '#e5e7eb' }
+            },
             y: {
-                beginAtZero: true
+                beginAtZero: true,
+                ticks: { color: '#000' },
+                grid: { color: '#e5e7eb' }
+            }
+        },
+        plugins: {
+            legend: {
+                labels: { color: '#000' }
             }
         }
     }
 });
 </script>
+
 
 </body>
 </html>

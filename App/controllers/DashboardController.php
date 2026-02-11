@@ -2,11 +2,9 @@
 
 class DashboardController extends Controller
 {
-    /**
-     * ==========================
-     * REDIRECT SESUAI ROLE
-     * ==========================
-     */
+    /* ===============================
+       INDEX
+    ================================ */
     public function index()
     {
         if (!isset($_SESSION['user'])) {
@@ -22,17 +20,14 @@ class DashboardController extends Controller
         exit;
     }
 
-    /**
-     * ==========================
-     * DASHBOARD ADMIN
-     * ==========================
-     */
+    /* ===============================
+       DASHBOARD ADMIN
+    ================================ */
     public function admin()
     {
         $this->auth('admin');
 
         $master = $this->model('Master');
-
         $status = $master->countByStatus();
 
         $laporanMasuk = 0;
@@ -76,11 +71,9 @@ class DashboardController extends Controller
         ]);
     }
 
-    /**
-     * ==========================
-     * DASHBOARD PETUGAS
-     * ==========================
-     */
+    /* ===============================
+       DASHBOARD PETUGAS
+    ================================ */
     public function petugas()
     {
         $this->auth('user');
@@ -114,82 +107,130 @@ class DashboardController extends Controller
         ]);
     }
 
-    /**
-     * ==========================
-     * LAPORAN MASUK ADMIN
-     * ==========================
-     */
-    public function laporanMasuk()
+    /* ===============================
+       LAPORAN MASUK ADMIN (PAGINATION)
+       - HANYA Diajukan & Proses
+    ================================ */
+   public function laporanMasuk()
+{
+    $limit = 10;
+
+    // AMBIL PAGE DARI URL
+    $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+    if ($currentPage < 1) $currentPage = 1;
+
+    $offset = ($currentPage - 1) * $limit;
+
+    $laporan = $this->model('LaporanModel')
+                    ->getLaporanMasukLimit($limit, $offset);
+
+    $totalData = $this->model('LaporanModel')->countLaporanMasuk();
+    $totalPage = ceil($totalData / $limit);
+
+    $this->view('admin/laporan/masuk', [
+        'laporan'     => $laporan,
+        'currentPage'=> $currentPage, // 🔥 WAJIB
+        'totalPage'  => $totalPage
+    ]);
+}
+
+
+
+    /* ===============================
+       KIRIM SOLUSI (ADMIN)
+       - Solusi WAJIB jika Selesai
+    ================================ */
+    public function kirimSolusi()
     {
         $this->auth('admin');
 
-        $laporan = $this->model('LaporanModel')->getByStatus('Diajukan');
+        $id     = $_POST['id_laporan'];
+        $status = $_POST['status'];
 
-        $this->view('admin/laporan/masuk', [
-            'laporan' => $laporan
+        if ($status === 'Selesai') {
+
+            if (empty($_POST['solusi'])) {
+                $_SESSION['error'] = 'Solusi wajib diisi jika status selesai';
+                header('Location: ' . BASEURL . '/dashboard/laporanMasuk');
+                exit;
+            }
+
+            $this->model('LaporanModel')
+                 ->updateSolusi($id, $_POST['solusi'], 'Selesai');
+
+        } else {
+            $this->model('LaporanModel')
+                 ->updateStatus($id, 'Proses');
+        }
+
+        header('Location: ' . BASEURL . '/dashboard/laporanMasuk');
+        exit;
+    }
+
+    /* ===============================
+       LIHAT SOLUSI (PETUGAS)
+       - HANYA JIKA SELESAI
+    ================================ */
+    public function lihatSolusi($id)
+    {
+        $this->auth('user');
+
+        $laporan = $this->model('LaporanModel')->getById($id);
+
+        if ($laporan['id_user'] != $_SESSION['user']['id']) {
+            die('Akses ditolak');
+        }
+
+        if ($laporan['status_laporan'] !== 'Selesai') {
+            die('Solusi belum tersedia');
+        }
+
+        if (empty($laporan['solusi_file'])) {
+            die('Solusi belum tersedia');
+        }
+
+        $path = ROOT . '/../storage/solusi/' . $laporan['solusi_file'];
+
+        if (!file_exists($path)) {
+            die('File tidak ditemukan');
+        }
+
+        header('Content-Type: ' . mime_content_type($path));
+        header('Content-Disposition: inline; filename="' . basename($path) . '"');
+        header('Content-Length: ' . filesize($path));
+        readfile($path);
+        exit;
+    }
+
+    /* ===============================
+       RIWAYAT & ARSIP PETUGAS
+       - HANYA STATUS SELESAI
+       - PAGINATION
+    ================================ */
+    public function riwayat()
+    {
+        $this->auth('user');
+
+        $userId = $_SESSION['user']['id'];
+        $page   = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit  = 10;
+        $offset = ($page - 1) * $limit;
+
+        $model = $this->model('LaporanModel');
+
+        $laporan = $model->getRiwayatByUser($userId, $limit, $offset);
+        $total   = $model->countRiwayatByUser($userId);
+
+        $this->view('laporan/riwayat', [
+            'laporan'     => $laporan,
+            'totalPage'   => ceil($total / $limit),
+            'currentPage' => $page
         ]);
     }
 
-    /**
-     * ==========================
-     * KIRIM SOLUSI 
-     * ==========================
-     */
-public function kirimSolusi()
-{
-    $this->auth('admin');
-
-    $id     = $_POST['id_laporan'];
-    $status = $_POST['status'];
-    $solusi = $_POST['solusi'];
-
-    $this->model('LaporanModel')->updateSolusi(
-        $id,
-        $solusi,
-        $status
-    );
-
-    header('Location: ' . BASEURL . '/dashboard/laporanMasuk');
-    exit;
-}
-
-
-
-public function lihatSolusi($id)
-{
-    $this->auth('user');
-
-    $laporan = $this->model('LaporanModel')->getById($id);
-
-    // cek kepemilikan laporan
-    if ($laporan['id_user'] != $_SESSION['user']['id']) {
-        die('Akses ditolak');
-    }
-
-    if (empty($laporan['solusi_file'])) {
-        die('Solusi belum tersedia');
-    }
-
-    $path = ROOT . '/../storage/solusi/' . $laporan['solusi_file'];
-
-
-    if (!file_exists($path)) {
-        die('File tidak ditemukan');
-    }
-
-    header('Content-Type: ' . mime_content_type($path));
-    header('Content-Disposition: inline; filename="' . basename($path) . '"');
-    header('Content-Length: ' . filesize($path));
-
-    readfile($path);
-    exit;
-}
-
-    /**
-     * ==========================
-     * LOGOUT
-     * ==========================
-     */
+    /* ===============================
+       LOGOUT
+    ================================ */
     public function logout()
     {
         session_destroy();

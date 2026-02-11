@@ -52,19 +52,24 @@ class AdminLaporanController extends Controller
     // ===============================
     // Halaman Laporan Masuk
     // ===============================
-    public function masuk()
-    {
-        $this->auth('admin');
+    public function laporanMasuk()
+{
+    $perPage = 5;
+    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+    if ($page < 1) $page = 1;
 
-        // Ambil semua laporan yang belum diarsipkan
-        $laporan = $this->model('LaporanModel')->getAll();
+    $offset = ($page - 1) * $perPage;
 
-        $data = [
-            'laporan' => $laporan
-        ];
+    $model = new LaporanModel();
 
-        $this->view('admin/laporan/masuk', $data);
-    }
+    $data['laporan'] = $model->getPaginate($perPage, $offset);
+    $total = $model->countAll();
+
+    $data['currentPage'] = $page;
+    $data['totalPage'] = ceil($total / $perPage);
+
+    $this->view('admin/laporan/riwayat', $data);
+}
 
     // ===============================
     // Halaman Riwayat / Arsip

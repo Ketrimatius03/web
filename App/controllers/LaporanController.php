@@ -42,16 +42,17 @@ class LaporanController extends Controller
     $this->view('laporan/tambah');
 }
 
-    public function riwayat()
-    {
-        $this->auth('user');
+public function riwayat()
+{
+    $this->auth('user');
 
-        $laporan = $this->model('LaporanModel')->getByUser($_SESSION['user']['id']);
+    $laporan = $this->model('LaporanModel')->getRiwayat();
 
-        $this->view('laporan/riwayat', [
-            'laporan' => $laporan
-        ]);
-    }
+    $this->view('laporan/riwayat', [
+        'laporan' => $laporan
+    ]);
+}
+
     public function detail($id)
 {
     $this->auth('user');
@@ -66,5 +67,28 @@ class LaporanController extends Controller
         'laporan' => $laporan
     ]);
 }
+
+public function simpanSolusi()
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+        $id = $_POST['id'];
+        $solusi = $_POST['solusi'];
+
+        $this->model('LaporanModel')->updateSolusi($id, $solusi);
+
+        header('Location: ' . BASEURL . '/dashboard/laporanMasuk');
+        exit;
+    }
+}
+
+public function getById($id)
+{
+    $this->db->query("SELECT * FROM laporan WHERE id = :id");
+    $this->db->bind('id', $id);
+    return $this->db->single();
+}
+
+
 
 }
